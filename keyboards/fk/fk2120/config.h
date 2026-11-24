@@ -61,10 +61,10 @@
 #endif
 
 #define RGB_MATRIX_LED_COUNT 94
+// Reactive effects fire on key press. (RGB_MATRIX_KEYRELEASES used to be defined
+// as well, which takes priority and delayed them until the key was released.)
 #define RGB_MATRIX_KEYPRESSES
-#define RGB_MATRIX_KEYRELEASES
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
-#define RGB_DISABLE_AFTER_TIMEOUT 0
 #define RGB_MATRIX_LED_FLUSH_LIMIT 16
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 128
 #define RGB_MATRIX_SLEEP
@@ -72,4 +72,25 @@
 #define RGB_MATRIX_SPD_STEP 64                 // 设置 RGB 矩阵速度步进值
 #define RGB_MATRIX_VAL_STEP 32                 // 设置 RGB 矩阵亮度步进值
 #define RGB_MATRIX_DEFAULT_VAL 64             // 设置 RGB 矩阵默认亮度值
-#define RGB_MATRIX_DEFAULT_SPD 255          // 设置 RGB 矩阵默认亮度值
+#define RGB_MATRIX_DEFAULT_SPD 255            // 设置 RGB 矩阵默认速度值
+#define RGB_MATRIX_HUE_STEP 8                  // RGB_HUI / RGB_HUD step (32 hues around the wheel)
+#define RGB_MATRIX_SAT_STEP 32                 // RGB_SAI / RGB_SAD step
+
+/*
+ * EEPROM emulation and VIA storage. The emulated EEPROM lives in the last 4 KiB
+ * of flash (0x1F000-0x1FFFF), so the firmware image must stay below 0x1F000.
+ */
+#define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  1151
+#define EEPROM_SIZE 1152
+
+#define FEE_PAGE_SIZE (0x200)
+#define FEE_PAGE_COUNT (8)
+
+#define FEE_PAGE_BASE_ADDRESS (0x1F000)
+#define FEE_MCU_FLASH_SIZE (0x1000)
+
+#define EECONFIG_USER_DATA_SIZE 4
+
+#define EECONFIG_KB_DATA_SIZE 1
+
+#define TRANSIENT_EEPROM_SIZE 4096

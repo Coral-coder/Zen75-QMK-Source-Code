@@ -1,0 +1,16 @@
+# Build output
+.build/
+/*.bin
+/*.hex
+/*.uf2
+!/fk_fk2120_via_stock.bin
+!/hm_wave75_rgb_via.bin
+
+# Python
+__pycache__/
+*.pyc
+
+# OS / editor noise
+.DS_Store
+.vscode/
+.idea/

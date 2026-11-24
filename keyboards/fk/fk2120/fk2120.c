@@ -55,6 +55,14 @@ led_config_t g_led_config = { {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 } };
 
+// The effect numbers are part of the VIA definition (Zen75@Cerakey.JSON) and are
+// what is stored in EEPROM, so make the build fail if the list ever shifts.
+_Static_assert(RGB_MATRIX_DIGITAL_RAIN == 30, "stock effect numbering changed: update Zen75@Cerakey.JSON");
+_Static_assert(RGB_MATRIX_RIVERFLOW == 45, "stock effect numbering changed: update Zen75@Cerakey.JSON");
+_Static_assert(RGB_MATRIX_CUSTOM_NASA_WORM == 46, "custom effect numbering changed: update Zen75@Cerakey.JSON");
+_Static_assert(RGB_MATRIX_CUSTOM_SCANNER == 50, "custom effect numbering changed: update Zen75@Cerakey.JSON");
+_Static_assert(SIDE_TOG == QK_KB + 14 && QMK_KB_BLE3_PAIR == QK_KB + 28, "custom keycodes changed: update Zen75@Cerakey.JSON");
+
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
     return false;

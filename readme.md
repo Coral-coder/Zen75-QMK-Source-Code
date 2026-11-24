@@ -1,40 +1,75 @@
-# THIS IS THE DEVELOP BRANCH
+# Zen75 QMK firmware
 
-Warning- This is the `develop` branch of QMK Firmware. You may encounter broken code here. Please see [Breaking Changes](https://docs.qmk.fm/#/breaking_changes) for more information.
+QMK/VIA firmware source for the Cerakey Zen75 (`fk/fk2120`, FS026 / ES32 MCU, USB + Bluetooth + 2.4 GHz).
+It is the vendor's QMK tree plus fixes, extra lighting effects and a CI build.
+The upstream QMK readme is kept in [docs/qmk_readme.md](docs/qmk_readme.md).
 
-# Quantum Mechanical Keyboard Firmware
+> The wireless, battery, EEPROM and LED-driver code ships only as a prebuilt library
+> (`lib/rdr_lib/librdrcommon.a`). It cannot be rebuilt or changed from this repository.
 
-[![Current Version](https://img.shields.io/github/tag/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/tags)
-[![Discord](https://img.shields.io/discord/440868230475677696.svg)](https://discord.gg/Uq7gcHh)
-[![Docs Status](https://img.shields.io/badge/docs-ready-orange.svg)](https://docs.qmk.fm)
-[![GitHub contributors](https://img.shields.io/github/contributors/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/pulse/monthly)
-[![GitHub forks](https://img.shields.io/github/forks/qmk/qmk_firmware.svg?style=social&label=Fork)](https://github.com/qmk/qmk_firmware/)
+## Lighting
 
-This is a keyboard firmware based on the [tmk\_keyboard firmware](https://github.com/tmk/tmk_keyboard) with some useful features for Atmel AVR and ARM controllers, and more specifically, the [OLKB product line](https://olkb.com), the [ErgoDox EZ](https://ergodox-ez.com) keyboard, and the Clueboard product line.
+### Changing colours
 
-## Documentation
+| Keys | Action |
+| --- | --- |
+| `Fn` + `PgUp` / `PgDn` | Hue + / − |
+| `Fn` + `Home` / `End` | Saturation + / − (all the way down gives white) |
+| `Fn` + `F6` / `F5` | Brightness + / − |
+| `Fn` + `←` / `→` | Next / previous effect |
+| `Fn` + `↑` / `↓` | Speed + / − |
+| `Fn` + `Enter` | Lighting on / off |
 
-* [See the official documentation on docs.qmk.fm](https://docs.qmk.fm)
+Side light bar: `Fn` + `Z` on/off, `X` next effect, `C`/`V` hue +/−, `B`/`N` saturation +/−,
+`M`/`,` brightness +/−, `.`/`/` speed +/−.
 
-The docs are powered by [Docsify](https://docsify.js.org/) and hosted on [GitHub](/docs/). They are also viewable offline; see [Previewing the Documentation](https://docs.qmk.fm/#/contributing?id=previewing-the-documentation) for more details.
+In VIA (load `keyboards/fk/fk2120/Zen75@Cerakey.JSON` in the Design tab) the Lighting page has a
+colour picker for the keys and a separate **Side Light** section.
 
-You can request changes by making a fork and opening a [pull request](https://github.com/qmk/qmk_firmware/pulls), or by clicking the "Edit this page" link at the bottom of any page.
+Hue and saturation apply to every effect except the fully random ones (`jellybean_raindrops`,
+`pixel_flow`) and `digital_rain`, which is deliberately left as the stock green "matrix" effect.
+The rainbow effects ignore hue but follow saturation.
 
-## Supported Keyboards
+### Added effects
 
-* [Planck](/keyboards/planck/)
-* [Preonic](/keyboards/preonic/)
-* [ErgoDox EZ](/keyboards/ergodox_ez/)
-* [Clueboard](/keyboards/clueboard/)
-* [Cluepad](/keyboards/clueboard/17/)
-* [Atreus](/keyboards/atreus/)
+They come after the stock effects in the cycle (numbers are the VIA effect ids).
 
-The project also includes community support for [lots of other keyboards](/keyboards/).
+| # | Effect | |
+| --- | --- | --- |
+| 46 | `nasa_worm` | The NASA worm lettering scrolling slowly right to left |
+| 47 | `digital_rain_hue` | The matrix rain in the selected colour |
+| 48 | `fire` | Flames from the bottom row; the hue sets the ember colour |
+| 49 | `aurora` | Slow curtains of colour around the selected hue |
+| 50 | `scanner` | A bar sweeping side to side |
 
-## Maintainers
+Source: [`keyboards/fk/fk2120/rgb_matrix_kb.inc`](keyboards/fk/fk2120/rgb_matrix_kb.inc).
 
-QMK is developed and maintained by Jack Humbert of OLKB with contributions from the community, and of course, [Hasu](https://github.com/tmk). The OLKB product firmwares are maintained by [Jack Humbert](https://github.com/jackhumbert), the Ergodox EZ by [ZSA Technology Labs](https://github.com/zsa), the Clueboard by [Zach White](https://github.com/skullydazed), and the Atreus by [Phil Hagelberg](https://github.com/technomancy).
+## Building
 
-## Official Website
+```sh
+# any arm-none-eabi-gcc 13.2 works: the distro package, or Arm's "Arm GNU Toolchain 13.2.rel1" (what CI uses)
+sudo apt-get install gcc-arm-none-eabi libnewlib-arm-none-eabi binutils-arm-none-eabi make
+python3 -m pip install qmk -r requirements.txt
+make fk/fk2120:via SKIP_GIT=yes
+```
 
-[qmk.fm](https://qmk.fm) is the official website of QMK, where you can find links to this page, the documentation, and the keyboards supported by QMK.
+The image is written to `.build/fk_fk2120_via.bin`. It must stay under 126976 bytes (0x1F000),
+where the emulated EEPROM begins; CI checks this.
+
+`fk_fk2120_via_stock.bin` is the vendor's original build, kept so you can always go back.
+
+## Releases
+
+Pushing any tag that ends in `b` (for example `v0.3.0b`) runs
+[`.github/workflows/build.yml`](.github/workflows/build.yml), which builds the firmware and
+publishes a GitHub release with the `.bin`, the VIA definition and checksums. The same thing can be
+done without git: run the workflow manually (Actions → Build firmware → Run workflow) and fill in
+`release_tag`; CI creates the tag on the commit it built. Pull requests get
+the same build as a downloadable artifact.
+
+If the new `Fn` shortcuts do not respond after flashing, the keyboard is still using the keymap
+stored in its EEPROM: reset it (`Fn` + `Backspace`, held for about three seconds) or assign the
+keys in VIA.
+
+None of the changes in this repository have been tested on hardware by CI; builds are compile
+and size checked only.

@@ -1,2 +1,1 @@
-VIA_ENABLE = yes
-EEPROM_DRIVER = custom
+# VIA and the EEPROM driver are enabled at keyboard level (../../rules.mk).
