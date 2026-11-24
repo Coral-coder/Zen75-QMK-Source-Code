@@ -44,4 +44,5 @@
 #include "starlight_dual_hue_anim.h"
 #include "riverflow_anim.h"
 
-#include "signalrgb_anim.h"
+// signalrgb_anim.h is deliberately not included: its SignalRGB host support is
+// commented out in via.c, so it only added a blank mode to the effect cycle.

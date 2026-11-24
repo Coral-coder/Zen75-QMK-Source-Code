@@ -59,15 +59,15 @@
 #define SIDE_LED_ENABLE         (1)
 
 /***************************全局变量***************************/
-bool Usb_If_Ok_Led;
-bool Usb_If_Ok;
-uint16_t Usb_If_Ok_Delay;
+extern bool Usb_If_Ok_Led;
+extern bool Usb_If_Ok;
+extern uint16_t Usb_If_Ok_Delay;
 
-uint16_t Usb_Change_Mode_Delay;
-bool Usb_Change_Mode_Wakeup;
-bool Mode_Synchronization_Signal;
+extern uint16_t Usb_Change_Mode_Delay;
+extern bool Usb_Change_Mode_Wakeup;
+extern bool Mode_Synchronization_Signal;
 
-unsigned int Debounce_Delay;
+extern unsigned int Debounce_Delay;
 
 bool User_Led_Show(void);
 void User_Keyboard_Reset(void);

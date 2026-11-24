@@ -35,18 +35,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [2] = LAYOUT_tkl_ansi(
         KC_ESC,  KC_BRID,  KC_BRIU,  LWIN(KC_TAB),KC_WSCH,      RGB_VAD,  RGB_VAI,   KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  KC_CALC,  LWIN(KC_H),LWIN(KC_L),
-        KC_GRV,  MD_BLE1,  MD_BLE2,  MD_BLE3,     MD_24G,       KC_5,     KC_6,      KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,             EE_CLR,    KC_PGUP,
-        KC_TAB,  KC_Q,     KC_W,     KC_E,        KC_R,         KC_T,     KC_Y,      KC_U,     KC_I,     TO(0),    TO(1),    KC_LBRC,  KC_RBRC,            KC_BSLS,   KC_PGDN,
-        KC_CAPS,           KC_A,     KC_S,        QK_BAT,       KC_F,     TIME_ST,   QK_DEB,   KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  RGB_RTOG,            KC_HOME,
-        KC_LSFT,           KC_Z,     KC_X,        KC_C,         KC_V,     KC_B,      KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,            RGB_SPI,   KC_END,
+        KC_GRV,  MD_BLE1,  MD_BLE2,  MD_BLE3,     MD_24G,       KC_5,     KC_6,      KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,             EE_CLR,    RGB_HUI,
+        KC_TAB,  KC_Q,     KC_W,     KC_E,        KC_R,         KC_T,     KC_Y,      KC_U,     KC_I,     TO(0),    TO(1),    KC_LBRC,  KC_RBRC,            KC_BSLS,   RGB_HUD,
+        KC_CAPS,           KC_A,     KC_S,        QK_BAT,       KC_F,     TIME_ST,   QK_DEB,   KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  RGB_RTOG,            RGB_SAI,
+        KC_LSFT,           SIDE_TOG, SIDE_MOD,    SIDE_HUI,     SIDE_HUD, SIDE_SAI,  SIDE_SAD, SIDE_VAI, SIDE_VAD, SIDE_SPI, SIDE_SPD, KC_RSFT,            RGB_SPI,   RGB_SAD,
         TEST_CL, QK_WLO,   KC_LALT,                             KC_SPC,                                  KC_RALT,  KC_NO,    KC_APP,             RGB_MOD,  RGB_SPD,   RGB_RMOD
-    ), 
+    ),
     [3] = LAYOUT_tkl_ansi(
         KC_ESC,  KC_F1,    KC_F2,    KC_F3,       KC_F4,        RGB_VAD,  RGB_VAI,   KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   LSG(KC_3),KC_INS,    KC_DEL,
-        KC_GRV,  MD_BLE1,  MD_BLE2,  MD_BLE3,     MD_24G,       KC_5,     KC_6,      KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,             EE_CLR,    KC_PGUP,
-        KC_TAB,  KC_Q,     KC_W,     KC_E,        KC_R,         KC_T,     KC_Y,      KC_U,     KC_I,     TO(0),    TO(1),    KC_LBRC,  KC_RBRC,            KC_BSLS,   KC_PGDN,
-        KC_CAPS,           KC_A,     KC_S,        QK_BAT,       KC_F,     TIME_ST,   QK_DEB,   KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  RGB_RTOG,            KC_HOME,
-        KC_LSFT,           KC_Z,     KC_X,        KC_C,         KC_V,     KC_B,      KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,            RGB_SPI,   KC_END,
+        KC_GRV,  MD_BLE1,  MD_BLE2,  MD_BLE3,     MD_24G,       KC_5,     KC_6,      KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,             EE_CLR,    RGB_HUI,
+        KC_TAB,  KC_Q,     KC_W,     KC_E,        KC_R,         KC_T,     KC_Y,      KC_U,     KC_I,     TO(0),    TO(1),    KC_LBRC,  KC_RBRC,            KC_BSLS,   RGB_HUD,
+        KC_CAPS,           KC_A,     KC_S,        QK_BAT,       KC_F,     TIME_ST,   QK_DEB,   KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  RGB_RTOG,            RGB_SAI,
+        KC_LSFT,           SIDE_TOG, SIDE_MOD,    SIDE_HUI,     SIDE_HUD, SIDE_SAI,  SIDE_SAD, SIDE_VAI, SIDE_VAD, SIDE_SPI, SIDE_SPD, KC_RSFT,            RGB_SPI,   RGB_SAD,
         TEST_CL, QK_WLO,   KC_LGUI,                             KC_SPC,                                  KC_RGUI,  KC_NO,    KC_RCTL,            RGB_MOD,  RGB_SPD,   RGB_RMOD
     )
 };

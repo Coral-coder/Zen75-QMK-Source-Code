@@ -71,7 +71,12 @@
 								[ "starlight", 42 ],
 								[ "starlight_dual_hue", 43 ],
 								[ "starlight_dual_sat", 44 ],
-								[ "riverflow", 45 ]
+								[ "riverflow", 45 ],
+								[ "nasa_worm", 46 ],
+								[ "digital_rain_hue", 47 ],
+								[ "fire", 48 ],
+								[ "aurora", 49 ],
+								[ "scanner", 50 ]
 							]
 						},
 						{
@@ -82,10 +87,49 @@
 							"content": ["id_qmk_rgb_matrix_effect_speed", 3, 3]
 						},
 						{
-							"showIf": "{id_qmk_rgb_matrix_effect} != 0 && {id_qmk_rgb_matrix_effect} != 24 && {id_qmk_rgb_matrix_effect} != 28 && {id_qmk_rgb_matrix_effect} != 29 && {id_qmk_rgb_matrix_effect} != 32",
+							"showIf": "{id_qmk_rgb_matrix_effect} != 0 && {id_qmk_rgb_matrix_effect} != 25 && {id_qmk_rgb_matrix_effect} != 29 && {id_qmk_rgb_matrix_effect} != 30",
 							"label": "Color",
 							"type": "color",
 							"content": ["id_qmk_rgb_matrix_color", 3, 4]
+						}
+					]
+				},
+				{
+					"label": "Side Light",
+					"content":
+					[
+						{
+							"label": "Brightness",
+							"type": "range",
+							"options": [0, 12],
+							"content": ["id_side_brightness", 4, 1]
+						},
+						{
+							"label": "Effect",
+							"type": "dropdown",
+							"content": ["id_side_effect", 4, 2],
+							"options":
+							[
+								[ "Off", 0 ],
+								[ "Rainbow wave", 1 ],
+								[ "Single colour wave", 2 ],
+								[ "Spectrum", 3 ],
+								[ "Breathing", 4 ],
+								[ "Solid colour", 5 ]
+							]
+						},
+						{
+							"showIf": "{id_side_effect} != 0 && {id_side_effect} != 5",
+							"label": "Effect Speed",
+							"type": "range",
+							"options": [0, 4],
+							"content": ["id_side_speed", 4, 3]
+						},
+						{
+							"showIf": "{id_side_effect} == 2 || {id_side_effect} == 4 || {id_side_effect} == 5",
+							"label": "Color",
+							"type": "color",
+							"content": ["id_side_color", 4, 4]
 						}
 					]
 				}
@@ -106,7 +150,22 @@
 		{"name": "KbdSecS",  "title": "Keyboard secondary sleep",                "shortName": "KbdSecS" },
         {"name": "IOS_SIRI", "title": "Outgoing SIRI",                           "shortName": "SIRI"    },
         {"name": "RTOG",     "title": "Toggle led lighting on or off",           "shortName": "RGB_RTOG"},
-        {"name": "QK_DEB",   "title": "Number of times that the key shakes off", "shortName": "QK_DEB"  }
+        {"name": "QK_DEB",   "title": "Number of times that the key shakes off", "shortName": "QK_DEB"  },
+		{"name": "S_TOG", "title": "Side light on/off", "shortName": "S_TOG"},
+		{"name": "S_MOD", "title": "Side light next effect", "shortName": "S_MOD"},
+		{"name": "S_RMOD", "title": "Side light previous effect", "shortName": "S_RMOD"},
+		{"name": "S_HUI", "title": "Side light hue +", "shortName": "S_HUI"},
+		{"name": "S_HUD", "title": "Side light hue -", "shortName": "S_HUD"},
+		{"name": "S_SAI", "title": "Side light saturation +", "shortName": "S_SAI"},
+		{"name": "S_SAD", "title": "Side light saturation -", "shortName": "S_SAD"},
+		{"name": "S_VAI", "title": "Side light brightness +", "shortName": "S_VAI"},
+		{"name": "S_VAD", "title": "Side light brightness -", "shortName": "S_VAD"},
+		{"name": "S_SPI", "title": "Side light speed +", "shortName": "S_SPI"},
+		{"name": "S_SPD", "title": "Side light speed -", "shortName": "S_SPD"},
+		{"name": "2.4G_P", "title": "Pair 2.4G", "shortName": "2.4G_P"},
+		{"name": "BLE1_P", "title": "Pair Bluetooth channel 1", "shortName": "BLE1_P"},
+		{"name": "BLE2_P", "title": "Pair Bluetooth channel 2", "shortName": "BLE2_P"},
+		{"name": "BLE3_P", "title": "Pair Bluetooth channel 3", "shortName": "BLE3_P"}
 	],
 	"matrix": { "rows": 6, "cols": 16 },
 	"layouts": {

@@ -1,0 +1,86 @@
+name: Build firmware
+
+# Builds the Zen75 (fk/fk2120) firmware.
+#  - pull requests and manual runs: build only, firmware attached as an artifact
+#  - any tag ending in "b" (v0.3.0b, 2026.11b, ...): build and publish a GitHub release
+on:
+  push:
+    tags:
+      - '*b'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  KEYBOARD: fk/fk2120
+  KEYMAP: via
+  # The emulated EEPROM starts at 0x1F000; the image must end below it.
+  MAX_FIRMWARE_BYTES: 126976
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gcc-arm-none-eabi libnewlib-arm-none-eabi binutils-arm-none-eabi make
+          python -m pip install --upgrade pip
+          python -m pip install qmk -r requirements.txt
+          arm-none-eabi-gcc --version | head -n 1
+
+      - name: Build
+        run: make "$KEYBOARD:$KEYMAP" SKIP_GIT=yes -j"$(nproc)"
+
+      - name: Check that the default keymap still links
+        run: make "$KEYBOARD:default" SKIP_GIT=yes -j"$(nproc)"
+
+      - name: Check firmware size
+        run: |
+          size=$(stat -c %s .build/fk_fk2120_via.bin)
+          echo "Firmware is $size bytes (limit $MAX_FIRMWARE_BYTES)"
+          test "$size" -le "$MAX_FIRMWARE_BYTES"
+
+      - name: Collect files
+        run: |
+          name="zen75_${KEYMAP}_${GITHUB_REF_NAME//\//-}"
+          mkdir dist
+          cp .build/fk_fk2120_via.bin "dist/${name}.bin"
+          cp "keyboards/fk/fk2120/Zen75@Cerakey.JSON" "dist/Zen75@Cerakey.JSON"
+          (cd dist && sha256sum * > SHA256SUMS && cat SHA256SUMS)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zen75-firmware
+          path: dist/
+          if-no-files-found: error
+
+  release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: zen75-firmware
+          path: dist
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Zen75 firmware $GITHUB_REF_NAME" \
+            --generate-notes \
+            --verify-tag
