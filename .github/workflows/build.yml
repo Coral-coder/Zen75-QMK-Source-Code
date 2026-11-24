@@ -1,14 +1,21 @@
 name: Build firmware
 
 # Builds the Zen75 (fk/fk2120) firmware.
-#  - pull requests and manual runs: build only, firmware attached as an artifact
+#  - pull requests and plain manual runs: build only, firmware attached as an artifact
 #  - any tag ending in "b" (v0.3.0b, 2026.11b, ...): build and publish a GitHub release
+#  - manual run with "release_tag" filled in: build, create that tag on the commit
+#    that was built and publish the release (no local git needed)
 on:
   push:
     tags:
       - '*b'
   pull_request:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Tag to create and release, ending in "b" (e.g. v0.3.0b). Leave empty to only build.'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -18,12 +25,23 @@ env:
   KEYMAP: via
   # The emulated EEPROM starts at 0x1F000; the image must end below it.
   MAX_FIRMWARE_BYTES: 126976
+  # The pushed tag, or the tag asked for in a manual run (empty when only building).
+  RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.release_tag }}
 
 jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check release tag
+        if: env.RELEASE_TAG != ''
+        run: |
+          case "$RELEASE_TAG" in
+            *[!A-Za-z0-9._-]*) echo "::error::Tag '$RELEASE_TAG' has characters other than letters, digits, '.', '_' and '-'"; exit 1 ;;
+            *b) echo "Releasing $RELEASE_TAG" ;;
+            *) echo "::error::Release tags must end in 'b' (got '$RELEASE_TAG')"; exit 1 ;;
+          esac
 
       - uses: actions/setup-python@v5
         with:
@@ -51,7 +69,8 @@ jobs:
 
       - name: Collect files
         run: |
-          name="zen75_${KEYMAP}_${GITHUB_REF_NAME//\//-}"
+          label="${RELEASE_TAG:-${GITHUB_REF_NAME//\//-}}"
+          name="zen75_${KEYMAP}_${label}"
           mkdir dist
           cp .build/fk_fk2120_via.bin "dist/${name}.bin"
           cp "keyboards/fk/fk2120/Zen75@Cerakey.JSON" "dist/Zen75@Cerakey.JSON"
@@ -64,7 +83,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
     needs: build
     runs-on: ubuntu-24.04
     permissions:
@@ -79,8 +98,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dist/* \
+          # For a manual run the tag does not exist yet: --target makes GitHub
+          # create it on the commit that was just built.
+          gh release create "$RELEASE_TAG" dist/* \
             --repo "$GITHUB_REPOSITORY" \
-            --title "Zen75 firmware $GITHUB_REF_NAME" \
-            --generate-notes \
-            --verify-tag
+            --target "$GITHUB_SHA" \
+            --title "Zen75 firmware $RELEASE_TAG" \
+            --generate-notes

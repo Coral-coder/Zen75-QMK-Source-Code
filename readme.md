@@ -61,7 +61,9 @@ where the emulated EEPROM begins; CI checks this.
 
 Pushing any tag that ends in `b` (for example `v0.3.0b`) runs
 [`.github/workflows/build.yml`](.github/workflows/build.yml), which builds the firmware and
-publishes a GitHub release with the `.bin`, the VIA definition and checksums. Pull requests get
+publishes a GitHub release with the `.bin`, the VIA definition and checksums. The same thing can be
+done without git: run the workflow manually (Actions → Build firmware → Run workflow) and fill in
+`release_tag`; CI creates the tag on the commit it built. Pull requests get
 the same build as a downloadable artifact.
 
 If the new `Fn` shortcuts do not respond after flashing, the keyboard is still using the keymap
