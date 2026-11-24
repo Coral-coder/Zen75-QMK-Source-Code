@@ -47,6 +47,7 @@ Source: [`keyboards/fk/fk2120/rgb_matrix_kb.inc`](keyboards/fk/fk2120/rgb_matrix
 ## Building
 
 ```sh
+# any arm-none-eabi-gcc 13.2 works: the distro package, or Arm's "Arm GNU Toolchain 13.2.rel1" (what CI uses)
 sudo apt-get install gcc-arm-none-eabi libnewlib-arm-none-eabi binutils-arm-none-eabi make
 python3 -m pip install qmk -r requirements.txt
 make fk/fk2120:via SKIP_GIT=yes

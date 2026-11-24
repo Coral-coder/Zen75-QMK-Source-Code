@@ -25,6 +25,8 @@ env:
   KEYMAP: via
   # The emulated EEPROM starts at 0x1F000; the image must end below it.
   MAX_FIRMWARE_BYTES: 126976
+  ARM_TOOLCHAIN_VERSION: 13.2.rel1
+  ARM_TOOLCHAIN_SHA256: 6cd1bbc1d9ae57312bcd169ae283153a9572bd6a8e4eeae2fedfbc33b115fdbb
   # The pushed tag, or the tag asked for in a manual run (empty when only building).
   RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.release_tag }}
 
@@ -48,18 +50,33 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install toolchain
-        # Fail fast instead of hanging if a package mirror stalls.
+      # The compiler comes from Arm's release server, pinned by checksum and cached.
+      # (Ubuntu's gcc-arm-none-eabi package is the same version, but its mirror
+      # repeatedly stalled mid-download on the hosted runners.)
+      - name: Cache Arm GNU toolchain
+        id: toolchain-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/arm-gnu-toolchain
+          key: arm-gnu-toolchain-${{ env.ARM_TOOLCHAIN_VERSION }}-${{ env.ARM_TOOLCHAIN_SHA256 }}
+
+      - name: Download Arm GNU toolchain
+        if: steps.toolchain-cache.outputs.cache-hit != 'true'
         timeout-minutes: 8
-        env:
-          DEBIAN_FRONTEND: noninteractive
         run: |
-          apt_opts="-o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o DPkg::Lock::Timeout=120"
-          sudo apt-get $apt_opts update
-          sudo apt-get $apt_opts install -y --no-install-recommends gcc-arm-none-eabi libnewlib-arm-none-eabi binutils-arm-none-eabi make
+          url="https://developer.arm.com/-/media/Files/downloads/gnu/${ARM_TOOLCHAIN_VERSION}/binrel/arm-gnu-toolchain-${ARM_TOOLCHAIN_VERSION}-x86_64-arm-none-eabi.tar.xz"
+          curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --speed-limit 100000 --speed-time 30 -o /tmp/toolchain.tar.xz "$url"
+          echo "${ARM_TOOLCHAIN_SHA256}  /tmp/toolchain.tar.xz" | sha256sum -c -
+          mkdir -p ~/arm-gnu-toolchain
+          tar -xf /tmp/toolchain.tar.xz -C ~/arm-gnu-toolchain --strip-components=1
+
+      - name: Install build tools
+        timeout-minutes: 5
+        run: |
+          echo "$HOME/arm-gnu-toolchain/bin" >> "$GITHUB_PATH"
+          "$HOME/arm-gnu-toolchain/bin/arm-none-eabi-gcc" --version | head -n 1
           python -m pip install --upgrade pip
           python -m pip install qmk -r requirements.txt
-          arm-none-eabi-gcc --version | head -n 1
 
       - name: Build
         run: make "$KEYBOARD:$KEYMAP" SKIP_GIT=yes -j"$(nproc)"
